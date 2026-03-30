@@ -1,49 +1,0 @@
-================================================================================
-Tokenizer: Qwen2TokenizerFast
-Dataset Name: vulnerability_merge
-Dataset: Dataset({
-    features: ['id', 'source', 'pair', 'cwe_id', 'code', 'summary', 'lines'],
-    num_rows: 1217863
-})
-Split: dataset
-Fields: ['code']
-Num Proc: 8
-Batch Size: 2000
-================================================================================
-Computing token lengths (num_proc=8):   0%|          | 0/1217863 [00:00<?, ? examples/s]Computing token lengths (num_proc=8):   0%|          | 2000/1217863 [00:06<1:06:54, 302.90 examples/s]Computing token lengths (num_proc=8):   0%|          | 4000/1217863 [00:08<40:51, 495.11 examples/s]  Computing token lengths (num_proc=8):   0%|          | 6000/1217863 [00:13<41:51, 482.55 examples/s]Computing token lengths (num_proc=8):   1%|          | 8000/1217863 [00:14<31:31, 639.54 examples/s]Computing token lengths (num_proc=8):   1%|          | 10000/1217863 [00:17<31:02, 648.44 examples/s]Computing token lengths (num_proc=8):   1%|          | 12000/1217863 [00:19<26:39, 753.73 examples/s]Computing token lengths (num_proc=8):   1%|          | 14000/1217863 [00:19<18:17, 1097.34 examples/s]Computing token lengths (num_proc=8):   2%|▏         | 20000/1217863 [00:20<09:26, 2115.85 examples/s]Computing token lengths (num_proc=8):   2%|▏         | 22000/1217863 [00:20<08:01, 2485.42 examples/s]Computing token lengths (num_proc=8):   2%|▏         | 24000/1217863 [00:25<15:58, 1245.81 examples/s]Computing token lengths (num_proc=8):   2%|▏         | 26000/1217863 [00:27<17:16, 1149.89 examples/s]Computing token lengths (num_proc=8):   2%|▏         | 28000/1217863 [00:30<21:09, 937.12 examples/s] Computing token lengths (num_proc=8):   2%|▏         | 30000/1217863 [00:35<30:00, 659.69 examples/s]Computing token lengths (num_proc=8):   3%|▎         | 32000/1217863 [00:36<24:32, 805.13 examples/s]Computing token lengths (num_proc=8):   3%|▎         | 34000/1217863 [00:37<18:55, 1042.45 examples/s]Computing token lengths (num_proc=8):   3%|▎         | 36000/1217863 [00:37<14:49, 1328.29 examples/s]Computing token lengths (num_proc=8):   3%|▎         | 38000/1217863 [00:38<10:56, 1798.56 examples/s]Computing token lengths (num_proc=8):   3%|▎         | 40000/1217863 [00:38<08:52, 2211.38 examples/s]Computing token lengths (num_proc=8):   3%|▎         | 42000/1217863 [00:38<07:31, 2602.89 examples/s]Computing token lengths (num_proc=8):   4%|▎         | 44000/1217863 [00:41<13:56, 1402.88 examples/s]Computing token lengths (num_proc=8):   4%|▍         | 46000/1217863 [00:45<20:16, 963.30 examples/s] Computing token lengths (num_proc=8):   4%|▍         | 48000/1217863 [00:48<22:11, 878.62 examples/s]Computing token lengths (num_proc=8):   4%|▍         | 50000/1217863 [00:54<32:53, 591.86 examples/s]Computing token lengths (num_proc=8):   4%|▍         | 52000/1217863 [00:55<26:47, 725.14 examples/s]Computing token lengths (num_proc=8):   4%|▍         | 54000/1217863 [00:56<20:05, 965.22 examples/s]Computing token lengths (num_proc=8):   5%|▍         | 58000/1217863 [00:57<13:30, 1431.80 examples/s]Computing token lengths (num_proc=8):   5%|▍         | 60000/1217863 [00:57<11:02, 1747.07 examples/s]Computing token lengths (num_proc=8):   5%|▌         | 62000/1217863 [01:00<15:27, 1246.43 examples/s]Computing token lengths (num_proc=8):   5%|▌         | 64000/1217863 [01:03<17:56, 1071.52 examples/s]Computing token lengths (num_proc=8):   5%|▌         | 66000/1217863 [01:03<14:55, 1285.76 examples/s]Computing token lengths (num_proc=8):   6%|▌         | 68000/1217863 [01:11<31:15, 613.11 examples/s] Computing token lengths (num_proc=8):   6%|▌         | 70000/1217863 [01:11<23:02, 830.45 examples/s]Computing token lengths (num_proc=8):   6%|▌         | 72000/1217863 [01:13<20:44, 920.86 examples/s]Computing token lengths (num_proc=8):   6%|▌         | 74000/1217863 [01:13<16:35, 1148.96 examples/s]Computing token lengths (num_proc=8):   6%|▌         | 76000/1217863 [01:15<14:35, 1303.89 examples/s]Computing token lengths (num_proc=8):   7%|▋         | 80000/1217863 [01:17<12:17, 1542.73 examples/s]Computing token lengths (num_proc=8):   7%|▋         | 82000/1217863 [01:19<13:56, 1358.36 examples/s]Computing token lengths (num_proc=8):   7%|▋         | 84000/1217863 [01:22<18:09, 1040.37 examples/s]Computing token lengths (num_proc=8):   7%|▋         | 86000/1217863 [01:26<23:01, 819.07 examples/s] Computing token lengths (num_proc=8):   7%|▋         | 86000/1217863 [01:27<19:16, 978.47 examples/s]
-Traceback (most recent call last):
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 612, in iflatmap_unordered
-    yield queue.get(timeout=0.05)
-  File "<string>", line 2, in get
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/multiprocess/managers.py", line 818, in _callmethod
-    kind, result = conn.recv()
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/multiprocess/connection.py", line 253, in recv
-    buf = self._recv_bytes()
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/multiprocess/connection.py", line 417, in _recv_bytes
-    buf = self._recv(4)
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/multiprocess/connection.py", line 382, in _recv
-    chunk = read(handle, remaining)
-KeyboardInterrupt
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/mnt/sdb1/mkx/data/toolkit/data_token_len/src/token_len_statis.py", line 192, in <module>
-    main()
-  File "/mnt/sdb1/mkx/data/toolkit/data_token_len/src/token_len_statis.py", line 179, in main
-    analyze_split(
-  File "/mnt/sdb1/mkx/data/toolkit/data_token_len/src/token_len_statis.py", line 123, in analyze_split
-    lengths = compute_token_lengths_map(
-  File "/mnt/sdb1/mkx/data/toolkit/data_token_len/src/token_len_statis.py", line 71, in compute_token_lengths_map
-    processed = dataset.map(
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 562, in wrapper
-    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3334, in map
-    for rank, done, content in iflatmap_unordered(
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 626, in iflatmap_unordered
-    [async_result.get(timeout=0.05) for async_result in async_results]
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/datasets/utils/py_utils.py", line 626, in <listcomp>
-    [async_result.get(timeout=0.05) for async_result in async_results]
-  File "/home/skl/anaconda3/envs/mdata/lib/python3.10/site-packages/multiprocess/pool.py", line 770, in get
-    raise TimeoutError
-multiprocess.context.TimeoutError

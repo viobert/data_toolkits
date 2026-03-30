@@ -1,8 +1,8 @@
 # DATA-TOOLKITs
 
 > This project focuses on fine-grained / routine data processing. It involves a relatively high degree of customization and does not guarantee general applicability.
-This directory is a tool repository for processing HuggingFace datasets, covering common workflows such as data cleaning, difference comparison, field fixing, field renaming, sampling, statistical analysis, and prompt construction.
-🚀 Continuously being updated...
+> This directory is a tool repository for processing HuggingFace datasets, covering common workflows such as data cleaning, difference comparison, field fixing, field renaming, sampling, statistical analysis, and prompt construction.
+> 🚀 Continuously being updated...
 
 **注意**该项目旨在数据的细节性/日常性处理，客制化程度较高，不保证通用性。
 
