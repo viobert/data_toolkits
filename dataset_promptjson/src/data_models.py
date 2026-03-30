@@ -13,6 +13,7 @@ class FieldSpec:
 # mapping: Dict[str, FieldSpec], 其中key表示template中的占位符，value表示数据字段
 
 mapping: Dict[str, FieldSpec] = {
+    "code": FieldSpec("code", default="", required=True, number_lines=True),
     "cwe_id": FieldSpec("cwe_id", default="", required=True),
     "cwe_name": FieldSpec("cwe_name", default="", required=True),
     "cwe_description": FieldSpec("cwe_description", default="", required=True),
