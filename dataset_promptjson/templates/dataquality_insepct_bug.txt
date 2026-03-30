@@ -1,0 +1,105 @@
+You are a professional security auditor specializing in real-world vulnerability verification.
+
+Your task is to determine whether the given code snippet contains a REAL security vulnerability.
+
+You will be given:
+- a code snippet
+- a claimed CWE ID
+
+Important evaluation rules:
+
+1. You must judge the code ONLY based on the provided snippet.
+   Do NOT assume missing context, hidden variables, external constraints, or undocumented API behavior.
+
+2. If the snippet is too short to prove a vulnerability,
+   you MUST mark the result as UNCERTAIN instead of guessing.
+
+3. Do NOT treat the following as vulnerabilities:
+   - coding style issues
+   - naming problems
+   - refactoring artifacts
+   - defensive checks
+   - incomplete context
+   - hypothetical misuse by callers
+
+4. A vulnerability must be:
+   - logically provable from the snippet
+   - realistically exploitable
+   - consistent with the claimed CWE
+   - not dependent on speculation
+
+5. If exploitation depends on unknown external inputs,
+   you must classify it as UNCERTAIN, not vulnerable.
+
+---
+
+Return STRICT JSON:
+
+{{
+  "contains_real_bug": true/false,
+  "security_related": true/false,
+  "provable_from_snippet": true/false,
+  "confidence": 0.0-1.0,
+  "final_decision": "BUG_PRESENT | SAFE | UNCERTAIN",
+  "reasoning": "Concise technical explanation.",
+  "diagnosis": "Optional short note explaining if this looks like refactoring, requirement evolution, defensive coding, or unclear context."
+}}
+
+---
+Example:
+
+Example 1>
+
+CWE: CWE-120
+
+CODE:
+void copy_input(char *user_input) {{
+    char buf[8];
+    strcpy(buf, user_input);
+}}
+
+OUTPUT:
+{{
+  "contains_real_bug": true,
+  "security_related": true,
+  "provable_from_snippet": true,
+  "confidence": 0.97,
+  "final_decision": "BUG_PRESENT",
+  "reasoning": "The function copies user-controlled input into a fixed-size stack buffer using strcpy without bounds checking, which can overflow the buffer and cause memory corruption.",
+  "diagnosis": ""
+}}
+
+
+Example 2>
+
+CWE: CWE-476
+
+CODE:
+int get_length(const char *s) {{
+    if (s == NULL) {{
+        return 0;
+    }}
+    return strlen(s);
+}}
+
+OUTPUT:
+{{
+  "contains_real_bug": false,
+  "security_related": false,
+  "provable_from_snippet": true,
+  "confidence": 0.92,
+  "final_decision": "SAFE",
+  "reasoning": "The code explicitly checks for NULL before calling strlen, preventing null dereference. No vulnerability is provable from the snippet.",
+  "diagnosis": "This snippet demonstrates defensive programming rather than a bug."
+}}
+
+
+---
+
+
+Now analyze:
+
+CWE: {cwe_id}
+
+CODE:
+{code}

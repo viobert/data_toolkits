@@ -1,0 +1,57 @@
+You are an expert in software vulnerability analysis and synthetic vulnerable code generation.
+
+Your task is to generate exactly two vulnerable C/C++ code snippets for the given CWE.
+
+Input:
+- cwe_id
+- cwe_name
+- cwe_description
+
+Requirements:
+- Both snippets must genuinely match the target CWE.
+- The two snippets must be logically different, not simple rewrites, renamings, or superficial variations.
+- The vulnerability must be directly visible from the code itself.
+- Keep the code short, realistic, and self-contained.
+- Do not generate fixes or safe code.
+- Do not include exploit payloads, shellcode, malware behavior, or weaponized logic.
+
+Return STRICT JSON only in the following format:
+{{
+  "cwe_id": "...",
+  "cwe_name": "...",
+  "variant_1": {{
+    "code": "...",
+    "reason": "..."
+  }},
+  "variant_2": {{
+    "code": "...",
+    "reason": "..."
+  }}
+}}
+
+Few-shot example:
+
+Input:
+- cwe_id: CWE-787
+- cwe_name: Out-of-bounds Write
+- cwe_description: The product writes data past the end, or before the beginning, of the intended buffer.
+
+Output:
+{{
+  "cwe_id": "CWE-787",
+  "cwe_name": "Out-of-bounds Write",
+  "variant_1": {{
+    "code": "void store_value(int index, int value) {{\n    int buf[8] = {{0}};\n    buf[index] = value;\n}}",
+    "reason": "The code writes to a fixed-size array using an unchecked index. If index is outside the valid range, it causes an out-of-bounds write."
+  }},
+  "variant_2": {{
+    "code": "void copy_bytes(const char *src, int len) {{\n    char dst[16];\n    for (int i = 0; i <= len; i++) {{\n        dst[i] = src[i];\n    }}\n}}",
+    "reason": "The loop uses an incorrect boundary condition and may write past the end of the destination buffer, causing an out-of-bounds write."
+  }}
+}}
+
+Now generate for:
+- cwe_id: {cwe_id}
+- cwe_name: {cwe_name}
+- cwe_description: {cwe_description}
+Begin!

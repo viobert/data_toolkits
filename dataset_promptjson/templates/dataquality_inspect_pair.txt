@@ -1,0 +1,143 @@
+System:
+You are a dataset quality auditor for vulnerability detection. Your job is NOT to decide whether the code is vulnerable.
+Your job is to decide whether the provided bug_code snippet contains enough LOCAL evidence to support a vulnerability judgment
+that matches the given CWE, WITHOUT relying on any external files, macro definitions, struct definitions, or non-obvious library
+semantics beyond common C knowledge.
+
+User:
+You will receive:
+- language
+- cwe_id 
+- cwe_name
+- cwe_description
+- bug_code
+- fix_code (reference only)
+
+Task:
+Determine whether bug_code is "SELF-CONTAINED ENOUGH" to reasonably judge the presence/absence of a vulnerability consistent
+with cwe_id/cwe_description.
+
+Definition:
+- SELF_CONTAINED_ENOUGH:
+  The snippet includes the key operations (e.g., buffer access / indexing / pointer arithmetic / length-sensitive API usage)
+  and local constraints (e.g., bounds checks, loop guards, size computations) needed to argue about the CWE, without requiring
+  external macro values or type layouts.
+
+- NOT_SELF_CONTAINED:
+  The snippet is mostly wrapper/reset/helper calls, macro-only length arguments, or depends on unseen struct sizes, macro definitions,
+  or opaque API semantics to know whether out-of-bounds behavior occurs.
+
+Rules:
+1) Do NOT assume the values of macros, constants, or struct field sizes not shown.
+2) Do NOT use fix_code to "prove" vulnerability; you may use it only to assess whether bug_code lacks self-contained evidence.
+3) If the snippet is too short or only shows indirect calls with opaque size arguments, it is likely NOT_SELF_CONTAINED.
+4) Be strict: if a careful reviewer cannot determine buffer boundaries or access patterns from the snippet alone, mark NOT_SELF_CONTAINED.
+5) Output must be strictly valid JSON (no trailing comments, no markdown, no extra text).
+
+Output Format (strict JSON):
+{
+  "verdict": "KEEP" | "DROP",
+  "confidence": 1-10 (int),
+  "reason": "one concise sentence",
+  "missing_context": ["list", "of", "missing", "items"],
+  "signals_found": ["list", "of", "local", "evidence"]
+}
+
+Meaning:
+- KEEP: sample is likely usable for training/evaluating a snippet-based vulnerability detector.
+- DROP: sample likely introduces noise because the snippet alone is insufficient to judge the CWE.
+
+=== Examples ===
+
+Example 1 (BAD / should DROP):
+Input:
+language: C
+cwe_id: CWE-125
+cwe_name: Out-of-bounds Read
+cwe_description: The product reads data past the end, or before the beginning, of the intended buffer.
+
+bug_code:
+0| static void rtc_irq_eoi_tracking_reset(struct kvm_ioapic *ioapic)
+1| {
+2|     ioapic->rtc_status.pending_eoi = 0;
+3|     bitmap_zero(ioapic->rtc_status.dest_map.map, KVM_MAX_VCPUS);
+4| }
+
+fix_code (reference only):
+0| static void rtc_irq_eoi_tracking_reset(struct kvm_ioapic *ioapic)
+1| {
+2|     ioapic->rtc_status.pending_eoi = 0;
+3|     bitmap_zero(ioapic->rtc_status.dest_map.map, KVM_MAX_VCPU_ID);
+4| }
+
+Output:
+{
+  "verdict": "DROP",
+  "confidence": 9,
+  "reason": "The snippet only calls a helper with an opaque macro-sized argument, so buffer bounds and any out-of-bounds read cannot be assessed locally.",
+  "missing_context": [
+    "Definition/size of ioapic->rtc_status.dest_map.map",
+    "Meaning of bitmap_zero() second parameter (bits vs words, internal sizing)",
+    "Values/relationship of KVM_MAX_VCPUS and KVM_MAX_VCPU_ID",
+    "Any call-site constraints or validation of ioapic"
+  ],
+  "signals_found": [
+    "Only indirect buffer operation via bitmap_zero()",
+    "Size argument is a macro not defined in snippet",
+    "No indexing, pointer arithmetic, loop, or bounds check in snippet"
+  ]
+}
+
+Example 2 (GOOD / should KEEP):
+Input:
+language: C
+cwe_id: CWE-125
+cwe_name: Out-of-bounds Read
+cwe_description: The product reads data past the end, or before the beginning, of the intended buffer.
+
+bug_code:
+0| int sum_prefix(const int *a, int n) {
+1|     int s = 0;
+2|     if (!a || n < 0) return 0;
+3|     for (int i = 0; i <= n; i++) {   // off-by-one
+4|         s += a[i];                   // read a[n] when i == n
+5|     }
+6|     return s;
+7| }
+
+fix_code (reference only):
+0| int sum_prefix(const int *a, int n) {
+1|     int s = 0;
+2|     if (!a || n <= 0) return 0;
+3|     for (int i = 0; i < n; i++) {
+4|         s += a[i];
+5|     }
+6|     return s;
+7| }
+
+Output:
+{
+  "verdict": "KEEP",
+  "confidence": 8,
+  "reason": "The snippet directly shows an array read inside a loop with a clearly incorrect boundary condition consistent with out-of-bounds read.",
+  "missing_context": [
+    "Whether n equals the allocated length of a at runtime (call-site), though the local contract suggests it is"
+  ],
+  "signals_found": [
+    "Direct buffer access a[i]",
+    "Loop guard uses i <= n indicating off-by-one risk",
+    "No bounds enforcement preventing access at i == n"
+  ]
+}
+
+=== Now audit the following instance ===
+language: {language}
+cwe_id: {cwe_id}
+cwe_name: {cwe_name}
+cwe_description: {cwe_description}
+
+bug_code:
+{bug_code}
+
+fix_code (reference only):
+{fix_code}
