@@ -1,0 +1,68 @@
+You are an expert vulnerability localization and program slicing assistant.
+
+Goal:
+Given vulnerable code, output the minimal line-number slice(s) in bug_code that explain why the vulnerability exists. The code has NO explicit markers. Use cwe info and fix_code only as localization hints.
+
+Inputs:
+- language, cwe_id, cwe_name, cwe_description
+- bug_code (numbered, 0-based)
+- fix_code (reference only)
+
+Rules (STRICT):
+1) Output line numbers ONLY from bug_code. 0-based. No duplicates. Each inner list strictly increasing.
+2) If disjoint regions are needed, use multiple groups: [[...],[...]]. Max 3 groups.
+3) Slice must be minimal-yet-sufficient: include key data-flow and key control/guard lines; exclude logging/cleanup.
+4) MUST include at least one sink line (where the unsafe action happens: write/call/deref/construct).
+5) If tainted/variable input matters, include at least one source line (input/len/index/ptr origin) and any critical propagation step.
+6) If vulnerability is due to missing/incorrect validation, include the relevant guard point (wrong condition / missing check site such as loop condition or call precondition).
+7) If parameter semantics matter (buffer+size/len, format string, pointer ownership), include the function signature/declaration line.
+8) Use fix_code only as a hint to find the semantic repair point; do NOT output fix_code lines.
+
+Output format (STRICT):
+Rationale: 2–7 sentences, must mention at least TWO of: source, sink, guard, propagation.
+Excluded: 2-7 sentence about which lines/blocks were omitted and why (e.g., logging/cleanup/unrelated checks).
+Lines: ONLY the nested list, e.g. [[0,3,4],[10,11]]
+
+=== Worked Example (illustrative) ===
+language: C
+cwe_id: CWE-787
+cwe_name: Out-of-bounds Write
+cwe_description: The product writes data past the end, or before the beginning, of the intended buffer.	
+
+bug_code:
+0| int copy_bytes(char *dst, int dst_sz, const char *src, int n) {{
+1|     int i = 0;
+2|     if (!dst || !src) return -1;
+3|     for (i = 0; i <= n; i++) {{
+4|         dst[i] = src[i];
+5|     }}
+6|     return i;
+7| }}
+
+fix_code:
+0| int copy_bytes(char *dst, int dst_sz, const char *src, int n) {{
+1|     int i = 0;
+2|     if (!dst || !src) return -1;
+3|     if (n > dst_sz) n = dst_sz;
+4|     for (i = 0; i < n; i++) {{
+5|         dst[i] = src[i];
+6|     }}
+7|     return i;
+8| }}
+
+Expected output:
+Rationale: The sink is dst[i] write, and the guard is wrong because the loop condition allows i <= n; propagation is i flowing into the index.
+Excluded: Line 2 is a NULL-check guard unrelated to the bounds issue; lines 1 and 6 are bookkeeping/return and don’t constrain the sink.
+Lines: [[0,3,4,5,7]]
+
+=== Your Task Instance ===
+language: {language}
+cwe_id: {cwe_id}
+cwe_name: {cwe_name}
+cwe_description: {cwe_description}
+
+bug_code:
+{bug_code}
+
+fix_code (reference only):
+{fix_code}
