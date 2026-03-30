@@ -1,8 +1,0 @@
-field,feature_type,total,none,empty_string,whitespace_string,empty_list,empty_dict,empty_container,placeholder_string,placeholder_container,missing_like_total,missing_like_ratio,normal,normal_ratio
-id,Value('string'),1217863,0,0,0,0,0,0,0,0,0,0.0,1217863,1.0
-source,Value('string'),1217863,0,0,0,0,0,0,0,0,0,0.0,1217863,1.0
-pair,Value('string'),1217863,1196127,0,0,0,0,0,0,0,1196127,0.98215234,21736,0.01784766
-cwe_id,List(Value('string')),1217863,0,0,0,97980,0,0,0,218421,316401,0.25980016,901462,0.74019984
-code,Value('string'),1217863,0,0,0,0,0,0,0,0,0,0.0,1217863,1.0
-summary,Value('string'),1217863,449957,850,0,0,0,0,0,0,450807,0.37016233,767056,0.62983767
-lines,List(List(Value('int64'))),1217863,0,0,0,463972,0,0,0,0,463972,0.38097224,753891,0.61902776
