@@ -2,19 +2,18 @@
 import json
 import os
 from datasets import load_from_disk, DatasetDict
-from config import DATASET_DIR, SPLIT_NAME, OUTPUT_DIR
 from utils import extract_placeholders, is_empty
 
 COMPUTED_PLACEHOLDERS = {"claimed_cwe_json", "claimed_cwe_text"}
 
-def load_datasets() -> DatasetDict:
+def load_datasets(dataset_dir: str, split_name: str):
     """加载数据集并处理split"""
-    ds = load_from_disk(DATASET_DIR)
+    ds = load_from_disk(dataset_dir)
 
     if isinstance(ds, DatasetDict):
-        if SPLIT_NAME not in ds:
-            raise ValueError(f"Split '{SPLIT_NAME}' not found in dataset")
-        return ds[SPLIT_NAME]
+        if split_name not in ds:
+            raise ValueError(f"Split '{split_name}' not found in dataset")
+        return ds[split_name]
     else:
         print(f"Warning: dataset is not a DatasetDict; using it directly")
         return ds
@@ -234,6 +233,9 @@ def validate_template_placeholders(template: str, mapping: dict) -> None:
 
 def choose_template_name(sample: dict, templates: dict, id_field: str, cwe_field: str) -> str:
     """根据样本内容选择模板，仅为带 CWE 的 bug 样本使用 CWE 模板。"""
+    if len(templates) == 1:
+        return next(iter(templates.keys()))
+
     sid = sample.get(id_field)
     has_cwe = not is_empty(sample.get(cwe_field))
 
@@ -245,11 +247,14 @@ def choose_template_name(sample: dict, templates: dict, id_field: str, cwe_field
     if isinstance(sid, str) and "good" in sid:
         return "dataquality_good_v2"
 
-    raise ValueError(f"Unknown type(bug/good/fix), sample ID: {sid}")
+    raise ValueError(
+        f"Unknown type(bug/good/fix), sample ID: {sid}. "
+        f"Available templates: {sorted(templates.keys())}"
+    )
 
 
-def prepare_output_path(dataset_name: str, split_tag: str) -> str:
+def prepare_output_path(dataset_name: str, split_tag: str, output_dir: str | None) -> str:
     """根据数据集和split名称准备输出路径"""
-    output_dir = OUTPUT_DIR or "./tmp"
+    output_dir = output_dir or "./tmp"
     os.makedirs(output_dir, exist_ok=True)
     return os.path.join(output_dir, f"{dataset_name}_{split_tag}.jsonl")
